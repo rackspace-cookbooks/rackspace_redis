@@ -1,4 +1,4 @@
-Description
+rackspace_redis cookbook
 ===========
 
 Requirements
