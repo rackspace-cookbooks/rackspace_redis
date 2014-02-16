@@ -2,7 +2,7 @@
 # Cookbook Name:: rackspace_redis
 # Recipe:: default
 #
-# Copyright 2014, Example Com
+# Copyright 2014, Rackspace, US Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,3 +16,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+case node['platform']
+when 'ubuntu','debian'
+  include_recipe 'rackspace_apt'
+
+  package 'python-software-properties' do
+    action :install
+  end
+
+  # Adding PPA for more up-to-date version of redis
+  execute 'setup-rwky/redis-ppa' do
+    command 'add-apt-repository -y ppa:rwky/redis'
+    ignore_failure false
+    notifies :run, "execute[apt-get update]", :immediately
+  end
+
+  package 'redis-server' do
+    action :install
+  end
+
+when 'redhat','centos'
+  include_recipe 'rackspace_yum'
+
+  # Make sure the epel repository exists
+  rackspace_yum_repository 'epel' do
+    description 'Extra Packages for Enterprise Linux'
+    mirrorlist 'http://mirrors.fedoraproject.org/mirrorlist?repo=epel-6&arch=$basearch'
+    gpgkey 'http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6'
+    action :create
+    not_if 'test -f /etc/yum.repos.d/epel.repo'
+  end
+
+  # Using Remi repository for a more up-to-date version of redis
+  rackspace_yum_repository "remi" do
+    description "Les RPM de remi pour Enterprise Linux $releasever - $basearch"
+    mirrorlist "http://rpms.famillecollet.com/enterprise/6/remi/mirror"
+    gpgkey "http://rpms.famillecollet.com/RPM-GPG-KEY-remi"
+    includepkgs "redis"
+    action :create
+  end
+
+  package 'redis' do
+    action :install
+  end
+end
