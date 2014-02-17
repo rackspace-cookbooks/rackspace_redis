@@ -1,0 +1,24 @@
+# This file is managed by Chef.
+# Do NOT modify this file directly.
+
+description "redis-sentinel daemon upstart script"
+author "Rackspace, US Inc. <rackspace-cookbooks@rackspace.com>"
+
+start on runlevel [2345]
+stop on runlevel [06]
+
+env BIN=<%= @bin %>
+env DAEMON="<%= @bin %> <%= @configfile %> --sentinel"
+env PID=<%= @pidfile %>
+
+respawn
+respawn limit 10 30
+
+pre-start script
+	$BIN -t
+        if [ $? -ne 0 ]
+                then exit $?
+        fi
+end script
+
+exec $DAEMON

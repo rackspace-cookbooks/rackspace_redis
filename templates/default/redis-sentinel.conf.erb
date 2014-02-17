@@ -1,0 +1,14 @@
+# This file is managed by Chef.
+# Do NOT modify this file directly.
+
+port <%= @port %>
+pidfile <%= @pidfile %>
+logfile <%= @logfile %>
+
+<% @sentinelhosts.each do |host| -%>
+sentinel monitor <%= @host %> <%= @sentinelhosts[host]['monitor'] %>
+sentinel down-after-milliseconds <%= @host %> <%= @sentinelhosts[host]['downaftermilliseconds'] %>
+sentinel failover-timeout <%= @host %> <%= @sentinelhosts[host]['failovertimeout'] %>
+sentinel parallel-syncs <%= @host %> <%= @sentinelhosts[host]['parallelsyncs']  %>
+
+<% end -%>

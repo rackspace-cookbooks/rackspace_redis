@@ -18,7 +18,7 @@
 #
 
 case node['platform']
-when 'ubuntu','debian'
+when 'ubuntu', 'debian'
   include_recipe 'rackspace_apt'
 
   package 'python-software-properties' do
@@ -29,14 +29,10 @@ when 'ubuntu','debian'
   execute 'setup-rwky/redis-ppa' do
     command 'add-apt-repository -y ppa:rwky/redis'
     ignore_failure false
-    notifies :run, "execute[apt-get update]", :immediately
+    notifies :run, 'execute[apt-get update]', :immediately
   end
 
-  package 'redis-server' do
-    action :install
-  end
-
-when 'redhat','centos'
+when 'redhat', 'centos'
   include_recipe 'rackspace_yum'
 
   # Make sure the epel repository exists
@@ -49,15 +45,39 @@ when 'redhat','centos'
   end
 
   # Using Remi repository for a more up-to-date version of redis
-  rackspace_yum_repository "remi" do
-    description "Les RPM de remi pour Enterprise Linux $releasever - $basearch"
-    mirrorlist "http://rpms.famillecollet.com/enterprise/6/remi/mirror"
-    gpgkey "http://rpms.famillecollet.com/RPM-GPG-KEY-remi"
-    includepkgs "redis"
+  rackspace_yum_repository 'remi' do
+    description 'Les RPM de remi pour Enterprise Linux $releasever - $basearch'
+    mirrorlist 'http://rpms.famillecollet.com/enterprise/6/remi/mirror'
+    gpgkey 'http://rpms.famillecollet.com/RPM-GPG-KEY-remi'
+    includepkgs 'redis'
     action :create
   end
-
-  package 'redis' do
-    action :install
-  end
 end
+
+package node['rackspace_redis']['redis_server']['servicename'] do
+  action :install
+end
+
+template node['rackspace_redis']['redis_server']['config_file'] do
+  cookbook node['rackspace_redis']['templates_cookbook']['redis_server_config']
+  owner 'root'
+  group 'root'
+  mode 0664
+  source 'redis.conf.erb'
+  variables(
+    config: node['rackspace_redis']['redis_server']['config']
+    )
+  notifies :restart, "service[#{node['rackspace_redis']['redis_server']['servicename']}]"
+end
+
+service node['rackspace_redis']['redis_server']['servicename'] do
+  case node['platform']
+  when 'ubuntu', 'debian'
+    supports status: true, restart: true, reload: true
+  when 'redhat', 'centos'
+    supports status: true, restart: true, reload: false
+  end
+  action [:enable, :start]
+end
+
+include_recipe 'rackspace_redis::sentinel'
