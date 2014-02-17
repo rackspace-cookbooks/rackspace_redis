@@ -79,5 +79,3 @@ service node['rackspace_redis']['redis_server']['servicename'] do
   end
   action [:enable, :start]
 end
-
-include_recipe 'rackspace_redis::sentinel'
