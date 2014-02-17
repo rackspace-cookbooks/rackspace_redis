@@ -27,6 +27,7 @@ when 'ubuntu', 'debian'
     mode 0664
     source 'upstart-redis-sentinel.erb'
     variables(
+      bin: node['rackspace_redis']['redis_sentinel']['bin'],
       configfile: node['rackspace_redis']['redis_sentinel']['config_file'],
       pidfile: node['rackspace_redis']['redis_sentinel']['config']['pidfile']
       )
@@ -36,9 +37,9 @@ end
 
 template node['rackspace_redis']['redis_sentinel']['config_file'] do
   cookbook node['rackspace_redis']['templates_cookbook']['redis_sentinel_config']
-  owner 'root'
-  group 'root'
-  mode 0664
+  owner 'redis'
+  group 'redis'
+  mode 0764
   source 'redis-sentinel.conf.erb'
   variables(
     sentinelhosts: node['rackspace_redis']['redis_sentinel']['config']['hosts'],
@@ -53,6 +54,9 @@ service node['rackspace_redis']['redis_sentinel']['servicename'] do
   case node['platform']
   when 'ubuntu', 'debian'
     supports status: true, restart: true, reload: false
+    if node['platform_version'].to_f >= 9.10
+      provider Chef::Provider::Service::Upstart
+    end
   when 'redhat', 'centos'
     supports status: true, restart: true, reload: false
   end

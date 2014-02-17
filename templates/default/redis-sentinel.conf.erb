@@ -5,10 +5,10 @@ port <%= @port %>
 pidfile <%= @pidfile %>
 logfile <%= @logfile %>
 
-<% @sentinelhosts.each do |host| -%>
-sentinel monitor <%= @host %> <%= @sentinelhosts[host]['monitor'] %>
-sentinel down-after-milliseconds <%= @host %> <%= @sentinelhosts[host]['downaftermilliseconds'] %>
-sentinel failover-timeout <%= @host %> <%= @sentinelhosts[host]['failovertimeout'] %>
-sentinel parallel-syncs <%= @host %> <%= @sentinelhosts[host]['parallelsyncs']  %>
+<% @sentinelhosts.each do |hostname, host| -%>
+sentinel monitor <%= hostname %> <%= host['monitor'] %>
+sentinel down-after-milliseconds <%= hostname %> <%= host['downaftermilliseconds'] %>
+sentinel failover-timeout <%= hostname %> <%= host['failovertimeout'] %>
+sentinel parallel-syncs <%= hostname %> <%= host['parallelsyncs']  %>
 
 <% end -%>

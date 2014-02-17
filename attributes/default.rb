@@ -2,7 +2,6 @@
 default['rackspace_redis']['templates_cookbook']['redis_server_config'] = 'rackspace_redis'
 default['rackspace_redis']['templates_cookbook']['redis_sentinel_config'] = 'rackspace_redis'
 default['rackspace_redis']['redis_server']['config_file'] = '/etc/redis.conf'
-default['rackspace_redis']['redis_sentinel']['init_script'] = '/etc/init.d/redis-sentinel'
 
 # Set specific service name and config file locations depending on platform
 case node['platform']
@@ -11,11 +10,13 @@ when 'ubuntu', 'debian'
   default['rackspace_redis']['redis_server']['config_file'] = '/etc/redis/redis.conf'
   default['rackspace_redis']['redis_sentinel']['servicename'] = 'redis-sentinel'
   default['rackspace_redis']['redis_sentinel']['config_file'] = '/etc/redis/redis-sentinel.conf'
+  default['rackspace_redis']['redis_sentinel']['init_script'] = '/etc/init/redis-sentinel.conf'
 when 'redhat', 'centos'
   default['rackspace_redis']['redis_server']['servicename'] = 'redis'
   default['rackspace_redis']['redis_server']['config_file'] = '/etc/redis.conf'
   default['rackspace_redis']['redis_sentinel']['servicename'] = 'redis-sentinel'
   default['rackspace_redis']['redis_sentinel']['config_file'] = '/etc/redis-sentinel.conf'
+  default['rackspace_redis']['redis_sentinel']['init_script'] = '/etc/init.d/redis-sentinel'
   default['rackspace_redis']['redis_sentinel']['bin'] = '/usr/bin/redis-server'
 end
 
@@ -103,8 +104,3 @@ default['rackspace_redis']['redis_sentinel']['config']['hosts']['mymaster']['mon
 default['rackspace_redis']['redis_sentinel']['config']['hosts']['mymaster']['downaftermilliseconds'] = '60000'
 default['rackspace_redis']['redis_sentinel']['config']['hosts']['mymaster']['failovertimeout'] = '180000'
 default['rackspace_redis']['redis_sentinel']['config']['hosts']['mymaster']['parallelsyncs'] = '1'
-default['rackspace_redis']['redis_sentinel']['config']['hosts']['resque']['monitor'] = '127.0.0.1 6379 2'
-default['rackspace_redis']['redis_sentinel']['config']['hosts']['resque']['downaftermilliseconds'] = '60000'
-default['rackspace_redis']['redis_sentinel']['config']['hosts']['resque']['failovertimeout'] = '180000'
-default['rackspace_redis']['redis_sentinel']['config']['hosts']['resque']['parallelsyncs'] = '1'
-

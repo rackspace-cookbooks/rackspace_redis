@@ -14,11 +14,4 @@ env PID=<%= @pidfile %>
 respawn
 respawn limit 10 30
 
-pre-start script
-	$BIN -t
-        if [ $? -ne 0 ]
-                then exit $?
-        fi
-end script
-
 exec $DAEMON
