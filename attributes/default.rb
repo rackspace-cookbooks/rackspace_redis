@@ -11,13 +11,13 @@ when 'ubuntu', 'debian'
   default['rackspace_redis']['redis_sentinel']['servicename'] = 'redis-sentinel'
   default['rackspace_redis']['redis_sentinel']['config_file'] = '/etc/redis/redis-sentinel.conf'
   default['rackspace_redis']['redis_sentinel']['init_script'] = '/etc/init/redis-sentinel.conf'
+  default['rackspace_redis']['redis_sentinel']['bin'] = '/usr/bin/redis-server'
 when 'redhat', 'centos'
   default['rackspace_redis']['redis_server']['servicename'] = 'redis'
   default['rackspace_redis']['redis_server']['config_file'] = '/etc/redis.conf'
   default['rackspace_redis']['redis_sentinel']['servicename'] = 'redis-sentinel'
   default['rackspace_redis']['redis_sentinel']['config_file'] = '/etc/redis-sentinel.conf'
   default['rackspace_redis']['redis_sentinel']['init_script'] = '/etc/init.d/redis-sentinel'
-  default['rackspace_redis']['redis_sentinel']['bin'] = '/usr/bin/redis-server'
 end
 
 # redis-server settings
