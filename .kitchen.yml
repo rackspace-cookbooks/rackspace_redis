@@ -28,3 +28,8 @@ suites:
   run_list:
   - recipe[rackspace_redis]
   attributes: {}
+- name: lwrps
+  run_list:
+  - recipe[rackspace_redis]
+  - recipe[rackspace_redis::sentinel]
+  - recipe[rackspace_redis_test::lwrps] 
