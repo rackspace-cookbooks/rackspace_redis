@@ -31,17 +31,6 @@ when 'ubuntu', 'debian'
      
   include_recipe 'rackspace_apt'
 
-#  package 'python-software-properties' do
-#    action :install
-#  end
-
-  # Adding PPA for more up-to-date version of redis
-#  execute 'setup-rwky/redis-ppa' do
-#    command 'add-apt-repository -y ppa:rwky/redis'
-#    ignore_failure false
-#    notifies :run, 'execute[apt-get update]', :immediately
-#  end
-
 when 'redhat', 'centos'
   include_recipe 'rackspace_yum'
 
