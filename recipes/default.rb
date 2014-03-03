@@ -19,6 +19,14 @@
 
 case node['platform']
 when 'ubuntu', 'debian'
+
+  rackspace_apt_repository 'ppa-redis' do
+    uri 'http://ppa.launchpad.net/rwky/redis/ubuntu'
+    distribution node['lsb']['codename']
+    components ['main']
+    deb_src :true
+  end
+     
   include_recipe 'rackspace_apt'
 
   package 'python-software-properties' do
@@ -26,11 +34,11 @@ when 'ubuntu', 'debian'
   end
 
   # Adding PPA for more up-to-date version of redis
-  execute 'setup-rwky/redis-ppa' do
-    command 'add-apt-repository -y ppa:rwky/redis'
-    ignore_failure false
-    notifies :run, 'execute[apt-get update]', :immediately
-  end
+#  execute 'setup-rwky/redis-ppa' do
+#    command 'add-apt-repository -y ppa:rwky/redis'
+#    ignore_failure false
+#    notifies :run, 'execute[apt-get update]', :immediately
+#  end
 
 when 'redhat', 'centos'
   include_recipe 'rackspace_yum'
