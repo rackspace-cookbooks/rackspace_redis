@@ -25,13 +25,15 @@ when 'ubuntu', 'debian'
     distribution node['lsb']['codename']
     components ['main']
     deb_src :true
+    keyserver 'keyserver.ubuntu.com'
+    key '5862E31D'
   end
      
   include_recipe 'rackspace_apt'
 
-  package 'python-software-properties' do
-    action :install
-  end
+#  package 'python-software-properties' do
+#    action :install
+#  end
 
   # Adding PPA for more up-to-date version of redis
 #  execute 'setup-rwky/redis-ppa' do
