@@ -10,8 +10,6 @@ platforms:
   driver_config:
     box: opscode-ubuntu-12.04
     box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-12.04_chef-provisionerless.box
-  run_list:
-  - recipe[rackspace_apt]
 - name: centos-6.4
   driver_config:
     box: opscode-centos-6.4
@@ -20,11 +18,29 @@ platforms:
   driver_config:
     box: opscode-debian-7.2.0
     box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_debian-7.2.0_chef-provisionerless.box
-  run_list:
-  - recipe[rackspace_apt]
 
 suites:
-- name: default
+- name: redis
   run_list:
-  - recipe[rackspace_redis]
-  attributes: {}
+  - recipe[redisio::default]
+  - recipe[redisio::enable]
+  attributes: {
+    "redisio": {
+      "servers": [{
+        "port": "6379"
+        }]
+    }
+  }
+- name: sentinel
+  run_list:
+  - recipe[redisio::sentinel]
+  - recipe[redisio::sentinel_enable]
+  attributes: {
+    "redisio": {
+      "sentinels": [{
+        "sentinel_port": "26379",
+        "name": "redisio",
+        "master_port": "6379"
+        }]
+    }
+  }

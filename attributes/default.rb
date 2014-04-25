@@ -1,106 +1,117 @@
-# Set the template and config file locations
-default['rackspace_redis']['templates_cookbook']['redis_server_config'] = 'rackspace_redis'
-default['rackspace_redis']['templates_cookbook']['redis_sentinel_config'] = 'rackspace_redis'
-default['rackspace_redis']['redis_server']['config_file'] = '/etc/redis.conf'
+# Cookbook Name:: redisio
+# Attribute::default
+#
+# Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 
-# Set specific service name and config file locations depending on platform
 case node['platform']
 when 'ubuntu', 'debian'
-  default['rackspace_redis']['redis_server']['servicename'] = 'redis-server'
-  default['rackspace_redis']['redis_server']['config_file'] = '/etc/redis/redis.conf'
-  default['rackspace_redis']['redis_sentinel']['servicename'] = 'redis-sentinel'
-  default['rackspace_redis']['redis_sentinel']['config_file'] = '/etc/redis/redis-sentinel.conf'
-  default['rackspace_redis']['redis_sentinel']['init_script'] = '/etc/init/redis-sentinel.conf'
-  default['rackspace_redis']['redis_sentinel']['bin'] = '/usr/bin/redis-server'
-when 'redhat', 'centos'
-  default['rackspace_redis']['redis_server']['servicename'] = 'redis'
-  default['rackspace_redis']['redis_server']['config_file'] = '/etc/redis.conf'
-  default['rackspace_redis']['redis_sentinel']['servicename'] = 'redis-sentinel'
-  default['rackspace_redis']['redis_sentinel']['config_file'] = '/etc/redis-sentinel.conf'
-  default['rackspace_redis']['redis_sentinel']['init_script'] = '/etc/init.d/redis-sentinel'
+  shell = '/bin/false'
+  homedir = '/var/lib/redis'
+when 'centos', 'redhat', 'scientific', 'amazon', 'suse'
+  shell = '/bin/sh'
+  homedir = '/var/lib/redis'
+when 'fedora'
+  shell = '/bin/sh'
+  homedir = '/home'
+else
+  shell = '/bin/sh'
+  homedir = '/redis'
 end
 
-# redis-server settings
-default['rackspace_redis']['redis_server']['config']['daemonize'] = 'yes'
-default['rackspace_redis']['redis_server']['config']['pidfile'] = '/var/run/redis.pid'
-default['rackspace_redis']['redis_server']['config']['port'] = '6379'
-default['rackspace_redis']['redis_server']['config']['tcpbacklog'] = '511'
-default['rackspace_redis']['redis_server']['config']['bind'] = '127.0.0.1'
-default['rackspace_redis']['redis_server']['config']['timeout'] = '0'
-default['rackspace_redis']['redis_server']['config']['tcpkeepalive'] = '0'
-default['rackspace_redis']['redis_server']['config']['loglevel'] = 'notice'
-default['rackspace_redis']['redis_server']['config']['logfile'] = '/var/log/redis/redis.log'
-default['rackspace_redis']['redis_server']['config']['databases'] = '16'
-default['rackspace_redis']['redis_server']['config']['save'] = ['900 1', '300 10', '60 10000']
-default['rackspace_redis']['redis_server']['config']['stopwritesonbgsaveerror'] = 'yes'
-default['rackspace_redis']['redis_server']['config']['rdbcompression'] = 'yes'
-default['rackspace_redis']['redis_server']['config']['rdbchecksum'] = 'yes'
-default['rackspace_redis']['redis_server']['config']['dbfilename'] = 'dump.rdb'
-default['rackspace_redis']['redis_server']['config']['dir'] = '/var/lib/redis/'
-default['rackspace_redis']['redis_server']['config']['slaveservestaledata'] = 'yes'
-default['rackspace_redis']['redis_server']['config']['slavereadonly'] = 'yes'
-default['rackspace_redis']['redis_server']['config']['repldisabletcpnodelay'] = 'no'
-default['rackspace_redis']['redis_server']['config']['slavepriority'] = '100'
-default['rackspace_redis']['redis_server']['config']['appendonly'] = 'no'
-default['rackspace_redis']['redis_server']['config']['appendfilename'] = '"appendonly.aof"'
-default['rackspace_redis']['redis_server']['config']['appendfsync'] = 'everysec'
-default['rackspace_redis']['redis_server']['config']['noappendfsynconrewrite'] = 'no'
-default['rackspace_redis']['redis_server']['config']['autoaofrewritepercentage'] = '100'
-default['rackspace_redis']['redis_server']['config']['autoaofrewriteminsize'] = '64mb'
-default['rackspace_redis']['redis_server']['config']['luatimelimit'] = '5000'
-default['rackspace_redis']['redis_server']['config']['slowloglogslowerthan'] = '10000'
-default['rackspace_redis']['redis_server']['config']['slowlogmaxlen'] = '128'
-default['rackspace_redis']['redis_server']['config']['notifykeyspaceevents'] = '""'
-default['rackspace_redis']['redis_server']['config']['hashmaxziplistentries'] = '512'
-default['rackspace_redis']['redis_server']['config']['hashmaxziplistvalue'] = '64'
-default['rackspace_redis']['redis_server']['config']['listmaxziplistentries'] = '512'
-default['rackspace_redis']['redis_server']['config']['listmaxziplistvalue'] = '64'
-default['rackspace_redis']['redis_server']['config']['setmaxintsetentries'] = '512'
-default['rackspace_redis']['redis_server']['config']['zsetmaxziplistentries'] = '128'
-default['rackspace_redis']['redis_server']['config']['zsetmaxziplistvalue'] = '64'
-default['rackspace_redis']['redis_server']['config']['activerehashing'] = 'yes'
-default['rackspace_redis']['redis_server']['config']['clientoutputbufferlimit_normal'] = '0 0 0'
-default['rackspace_redis']['redis_server']['config']['clientoutputbufferlimit_slave'] = '256mb 64mb 60'
-default['rackspace_redis']['redis_server']['config']['clientoutputbufferlimit_pubsub'] = '32mb 8mb 60'
-default['rackspace_redis']['redis_server']['config']['hz'] = '10'
-default['rackspace_redis']['redis_server']['config']['aofrewriteincrementalfsync'] = 'yes'
-# Disabled or commented by default
-# default['rackspace_redis']['redis_server']['config']['unixsocket'] = '/tmp/redis.sock'
-# default['rackspace_redis']['redis_server']['config']['unixsocketperm'] = '755'
-# default['rackspace_redis']['redis_server']['config']['syslogenabled'] = 'no'
-# default['rackspace_redis']['redis_server']['config']['syslogident'] = 'redis'
-# default['rackspace_redis']['redis_server']['config']['syslogfacility'] = 'local0'
-# default['rackspace_redis']['redis_server']['config']['slaveof'] = nil
-# default['rackspace_redis']['redis_server']['config']['masterauth'] = nil
-# default['rackspace_redis']['redis_server']['config']['replpingslaveperiod'] = '10'
-# default['rackspace_redis']['redis_server']['config']['repltimeout'] = '60'
-# default['rackspace_redis']['redis_server']['config']['replbacklogsize'] = '1mb'
-# default['rackspace_redis']['redis_server']['config']['replbacklogttl'] = '3600'
-# default['rackspace_redis']['redis_server']['config']['minslavestowrite'] = '3'
-# default['rackspace_redis']['redis_server']['config']['minslavesmaxlag'] = '10'
-# default['rackspace_redis']['redis_server']['config']['requirepass'] = 'foobared'
-# default['rackspace_redis']['redis_server']['config']['renamecommand'] = nil
-# default['rackspace_redis']['redis_server']['config']['maxclients'] = '10000'
-# default['rackspace_redis']['redis_server']['config']['maxmemory'] = nil
-# default['rackspace_redis']['redis_server']['config']['maxmemorypolicy'] = 'volatile-lru'
-# default['rackspace_redis']['redis_server']['config']['maxmemorysamples'] = '3'
-# default['rackspace_redis']['redis_server']['config'][''] =
-# default['rackspace_redis']['redis_server']['config'][''] =
+# Install related attributes
+default['redisio']['safe_install'] = true
+default['redisio']['bypass_setup'] = false
 
-# redis-sentinel global settings
-default['rackspace_redis']['redis_sentinel']['config']['port'] = '26379'
-default['rackspace_redis']['redis_sentinel']['config']['pidfile'] = '/var/run/redis-sentinel.pid'
-default['rackspace_redis']['redis_sentinel']['config']['logfile'] = '/var/log/redis/redis-sentinel.log'
-# Sample data structure for each sentinel's attributes
-# default['rackspace_redis']['redis_sentinel']['config']['hosts'][hostname]['monitor'] = '127.0.0.1 6379 2'
-# default['rackspace_redis']['redis_sentinel']['config']['hosts'][hostname]['downaftermilliseconds'] = '60000'
-# default['rackspace_redis']['redis_sentinel']['config']['hosts'][hostname]['failovertimeout'] = '180000'
-# default['rackspace_redis']['redis_sentinel']['config']['hosts'][hostname]['parallelsyncs'] = '1'
-# default['rackspace_redis']['redis_sentinel']['config']['hosts'][hostname]['authpass'] = 'MySUPER--secret--0123passw0rd'
-# default['rackspace_redis']['redis_sentinel']['config']['hosts'][hostname]['canfailover'] = 'yes'
-# default['rackspace_redis']['redis_sentinel']['config']['hosts'][hostname]['notificationscript'] = '/var/redis/notify.sh'
-# default['rackspace_redis']['redis_sentinel']['config']['hosts'][hostname]['clientreconfigscript'] = '/var/redis/reconfig.sh'
-default['rackspace_redis']['redis_sentinel']['config']['hosts']['mymaster']['monitor'] = '127.0.0.1 6379 2'
-default['rackspace_redis']['redis_sentinel']['config']['hosts']['mymaster']['downaftermilliseconds'] = '60000'
-default['rackspace_redis']['redis_sentinel']['config']['hosts']['mymaster']['failovertimeout'] = '180000'
-default['rackspace_redis']['redis_sentinel']['config']['hosts']['mymaster']['parallelsyncs'] = '1'
+# Tarball and download related defaults
+default['redisio']['mirror'] = 'http://download.redis.io/releases/'
+default['redisio']['base_name'] = 'redis-'
+default['redisio']['artifact_type'] = 'tar.gz'
+default['redisio']['version'] = '2.8.6'
+default['redisio']['base_piddir'] = '/var/run/redis'
+
+# Custom installation directory
+default['redisio']['install_dir'] = nil
+
+# Job control related options (initd or upstart)
+default['redisio']['job_control'] = 'initd'
+
+# Init.d script related options
+default['redisio']['init.d']['required_start'] = []
+default['redisio']['init.d']['required_stop'] = []
+
+# Default settings for all redis instances, these can be overridden on a per server basis in the 'servers' hash
+default['redisio']['default_settings'] = {
+  'user'                    => 'redis',
+  'group'                   => 'redis',
+  'homedir'                 => homedir,
+  'shell'                   => shell,
+  'systemuser'              => true,
+  'ulimit'                  => 0,
+  'configdir'               => '/etc/redis',
+  'name'                    => nil,
+  'address'                 => nil,
+  'databases'               => '16',
+  'backuptype'              => 'rdb',
+  'datadir'                 => '/var/lib/redis',
+  'unixsocket'              => nil,
+  'unixsocketperm'          => nil,
+  'timeout'                 => '0',
+  'loglevel'                => 'notice',
+  'logfile'                 => nil,
+  'syslogenabled'           => 'yes',
+  'syslogfacility'          => 'local0',
+  'shutdown_save'           => false,
+  'save'                    => nil, # Defaults to ['900 1','300 10','60 10000'] inside of template.  Needed due to lack of hash subtraction
+  'stopwritesonbgsaveerror' => 'yes',
+  'slaveof'                 => nil,
+  'masterauth'              => nil,
+  'slaveservestaledata'     => 'yes',
+  'replpingslaveperiod'     => '10',
+  'repltimeout'             => '60',
+  'requirepass'             => nil,
+  'maxclients'              => 10000,
+  'maxmemory'               => nil,
+  'maxmemorypolicy'         => 'volatile-lru',
+  'maxmemorysamples'        => '3',
+  'appendfsync'             => 'everysec',
+  'noappendfsynconrewrite'  => 'no',
+  'aofrewritepercentage'    => '100',
+  'aofrewriteminsize'       => '64mb',
+  'luatimelimit'            => '5000',
+  'slowloglogslowerthan'    => '10000',
+  'slowlog-max-len'         => '1024',
+  'notifykeyspaceevents'    => '',
+  'hashmaxziplistentries'   => '512',
+  'hashmaxziplistvalue'     => '64',
+  'setmaxintsetentries'     => '512',
+  'zsetmaxziplistentries'   => '128',
+  'zsetmaxziplistvalue'     => '64',
+  'activerehasing'          => 'yes',
+  'clientoutputbufferlimit' => [
+    %w(normal 0 0 0),
+    %w(slave 256mb 64mb 60),
+    %w(pubsub 32mb 8mb 60)
+  ],
+  'hz'                         => '10',
+  'aofrewriteincrementalfsync' => 'yes',
+  'cluster-enabled'            => 'no',
+  'cluster-config-file'        => nil, # Defaults to redis instance name inside of template if cluster is enabled.
+  'cluster-node-timeout'       => 5,
+  'includes'                   => nil
+}
+
+# The default for this is set inside of the "install" recipe. This is due to the way deep merge handles arrays
+default['redisio']['servers'] = nil

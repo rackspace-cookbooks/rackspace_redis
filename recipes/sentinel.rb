@@ -1,8 +1,9 @@
 #
-# Cookbook Name:: rackspace_redis
+# Cookbook Name:: redisio
 # Recipe:: sentinel
 #
-# Copyright 2014, Rackspace, US Inc.
+# Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
+# Copyright 2013, Rackspace Hosting <ryan.cleere@rackspace.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,49 +17,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include_recipe 'redisio::_install_prereqs'
+include_recipe 'redisio::install'
+include_recipe 'ulimit::default'
 
-# init script for redis-sentinel non-existent on Ubuntu. Drop one off.
-case node['platform']
-when 'ubuntu', 'debian'
-  template node['rackspace_redis']['redis_sentinel']['init_script'] do
-    cookbook node['rackspace_redis']['templates_cookbook']['redis_sentinel_config']
-    owner 'root'
-    group 'root'
-    mode 0664
-    source 'upstart-redis-sentinel.erb'
-    variables(
-      bin: node['rackspace_redis']['redis_sentinel']['bin'],
-      configfile: node['rackspace_redis']['redis_sentinel']['config_file'],
-      pidfile: node['rackspace_redis']['redis_sentinel']['config']['pidfile']
-      )
-    action :create
-  end
+redis = node['redisio']
+
+sentinel_instances = redis['sentinels']
+if sentinel_instances.empty?
+  sentinel_instances = [{'port' => '26379', 'name' => 'mycluster', 'master_ip' => '127.0.0.1', 'master_port' => 6379}]
 end
 
-template node['rackspace_redis']['redis_sentinel']['config_file'] do
-  cookbook node['rackspace_redis']['templates_cookbook']['redis_sentinel_config']
-  owner 'redis'
-  group 'redis'
-  mode 0764
-  source 'redis-sentinel.conf.erb'
-  variables(
-    sentinelhosts: node['rackspace_redis']['redis_sentinel']['config']['hosts'],
-    port: node['rackspace_redis']['redis_sentinel']['config']['port'],
-    pidfile: node['rackspace_redis']['redis_sentinel']['config']['pidfile'],
-    logfile: node['rackspace_redis']['redis_sentinel']['config']['logfile']
-    )
-  notifies :restart, "service[#{node['rackspace_redis']['redis_sentinel']['servicename']}]"
+redisio_sentinel "redis-sentinels" do
+  sentinel_defaults redis['sentinel_defaults']
+  sentinels sentinel_instances
+  base_piddir redis['base_piddir']
 end
 
-service node['rackspace_redis']['redis_sentinel']['servicename'] do
-  case node['platform']
-  when 'ubuntu', 'debian'
-    supports status: true, restart: true, reload: false
-    if node['platform_version'].to_f >= 9.10
+# Create a service resource for each sentinel instance, named for the port it runs on.
+sentinel_instances.each do |current_sentinel|
+  sentinel_name = current_sentinel['name']
+  job_control   = node['redisio']['job_control']
+
+  if job_control == 'initd'
+  	service "redis_sentinel_#{sentinel_name}" do
+      start_command "/etc/init.d/redis_sentinel_#{sentinel_name} start"
+      stop_command "/etc/init.d/redis_sentinel_#{sentinel_name} stop"
+      case node['platform']
+      when 'centos','redhat','scientific','amazon','suse'
+        status_command "pgrep -lf 'redis.*#{sentinel_name}' | grep -v 'sh'"
+      else
+        status_command "pgrep -lf 'redis.*#{sentinel_name}'"
+      end
+      restart_command "/etc/init.d/redis_sentinel_#{sentinel_name} stop && /etc/init.d/redis_sentinel_#{sentinel_name} start"
+      supports :start => true, :stop => true, :restart => true, :status => false
+  	end
+  elsif job_control == 'upstart'
+    service "redis_sentinel_#{sentinel_name}" do
       provider Chef::Provider::Service::Upstart
+      start_command "start redis_sentinel_#{sentinel_name}"
+      stop_command "stop redis_sentinel_#{sentinel_name}"
+      restart_command "restart redis_sentinel_#{sentinel_name}"
+      supports :start => true, :stop => true, :restart => true, :status => false
     end
-  when 'redhat', 'centos'
-    supports status: true, restart: true, reload: false
+  else
+    Chef::Log.error("Unknown job control type, no service resource created!")
   end
-  action [:enable, :start]
+
 end
+
+node.set['redisio']['sentinels'] = sentinel_instances
+

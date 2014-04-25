@@ -1,8 +1,9 @@
 #
 # Cookbook Name:: redisio
-# Recipe:: install
+# Recipe:: sentinel_enable
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
+#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,16 +17,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe 'redisio::_install_prereqs'
-include_recipe 'build-essential::default'
-include_recipe 'ulimit::default'
 
 redis = node['redisio']
-location = "#{redis['mirror']}/#{redis['base_name']}#{redis['version']}.#{redis['artifact_type']}"
 
-redisio_install "redis-installation" do
-  version redis['version']
-  download_url location
-  safe_install redis['safe_install']
-  install_dir redis['install_dir']
+redis['sentinels'].each do |current_sentinel|
+  sentinel_name = current_sentinel['name']
+  resource = resources("service[redis_sentinel_#{sentinel_name}]")
+  resource.action Array(resource.action)
+  resource.action << :start
+  resource.action << :enable
 end

@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: rackspace_redis
-# Recipe:: master
+# Cookbook Name:: redisio
+# Recipe:: _install_prereqs
 #
-# Copyright 2014, Rackspace, US Inc.
+# Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,3 +16,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+case node.platform
+when 'debian','ubuntu'
+  %w[tar].each do |pkg|
+    package pkg do
+      action :install
+    end
+  end
+when 'redhat','centos','fedora','scientific','suse','amazon'
+  %w[tar].each do |pkg|
+    package pkg do
+      action :install
+      end
+  end
+end
+

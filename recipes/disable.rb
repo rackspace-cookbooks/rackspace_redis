@@ -1,8 +1,9 @@
 #
-# Cookbook Name:: rackspace_redis
-# Recipe:: slave
+# Cookbook Name:: redisio
+# Recipe:: disable
 #
-# Copyright 2014, Rackspace, US Inc.
+# Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
+#
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,3 +17,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+redis = node['redisio']
+
+redis['servers'].each do |current_server|
+  server_name = current_server["name"] || current_server["port"]
+  resource = resources("service[redis#{server_name}]")
+  resource.action Array(resource.action)
+  resource.action << :stop
+  resource.action << :disable
+end
+

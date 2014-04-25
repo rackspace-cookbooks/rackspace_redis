@@ -1,4 +1,6 @@
+source "https://api.berkshelf.com"
+
 metadata
 
-cookbook "rackspace_apt", github: "rackspace-cookbooks/rackspace_apt"
-cookbook "rackspace_yum", github: "rackspace-cookbooks/rackspace_yum"
+cookbook 'ulimit',                :github => 'bmhatfield/chef-ulimit', :ref => 'v0.3.1'
+cookbook 'build-essential',       :github => 'opscode-cookbooks/build-essential', :ref => 'v1.4.2'

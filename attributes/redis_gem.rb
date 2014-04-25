@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: redisio
-# Recipe:: install
+# Attribute::redis_gem
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
 #
@@ -16,16 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe 'redisio::_install_prereqs'
-include_recipe 'build-essential::default'
-include_recipe 'ulimit::default'
 
-redis = node['redisio']
-location = "#{redis['mirror']}/#{redis['base_name']}#{redis['version']}.#{redis['artifact_type']}"
+# Allow for a redis ruby gem to be installed
+default['redisio']['gem']['name'] = 'redis'
+default['redisio']['gem']['version'] = nil
 
-redisio_install "redis-installation" do
-  version redis['version']
-  download_url location
-  safe_install redis['safe_install']
-  install_dir redis['install_dir']
-end
