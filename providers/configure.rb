@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Provider::configure
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -163,7 +163,7 @@ def configure
       #Lay down the configuration files for the current instance
       template "#{current['configdir']}/#{server_name}.conf" do
         source 'redis.conf.erb'
-        cookbook 'redisio'
+        cookbook 'rackspace_redis'
         owner current['user']
         group current['group']
         mode '0644'
@@ -171,7 +171,7 @@ def configure
           :version                    => version_hash,
           :piddir                     => piddir,
           :name                       => server_name,
-          :job_control                => node['redisio']['job_control'],
+          :job_control                => node['rackspace_redis']['job_control'],
           :port                       => current['port'],
           :address                    => current['address'],
           :databases                  => current['databases'],
@@ -221,17 +221,17 @@ def configure
       end
       #Setup init.d file
       bin_path = "/usr/local/bin"
-      bin_path = ::File.join(node['redisio']['install_dir'], 'bin') if node['redisio']['install_dir']
+      bin_path = ::File.join(node['rackspace_redis']['install_dir'], 'bin') if node['rackspace_redis']['install_dir']
       template "/etc/init.d/redis#{server_name}" do
         source 'redis.init.erb'
-        cookbook 'redisio'
+        cookbook 'rackspace_redis'
         owner 'root'
         group 'root'
         mode '0755'
         variables({
           :name => server_name,
           :bin_path => bin_path,
-          :job_control => node['redisio']['job_control'],
+          :job_control => node['rackspace_redis']['job_control'],
           :port => current['port'],
           :address => current['address'],
           :user => current['user'],
@@ -242,21 +242,21 @@ def configure
           :platform => node['platform'],
           :unixsocket => current['unixsocket'],
           :ulimit => descriptors,
-          :required_start => node['redisio']['init.d']['required_start'].join(" "),
-          :required_stop => node['redisio']['init.d']['required_stop'].join(" ")
+          :required_start => node['rackspace_redis']['init.d']['required_start'].join(" "),
+          :required_stop => node['rackspace_redis']['init.d']['required_stop'].join(" ")
           })
-        only_if { node['redisio']['job_control'] == 'initd' }
+        only_if { node['rackspace_redis']['job_control'] == 'initd' }
       end
       template "/etc/init/redis#{server_name}.conf" do
         source 'redis.upstart.conf.erb'
-        cookbook 'redisio'
+        cookbook 'rackspace_redis'
         owner current['user']
         group current['group']
         mode '0644'
         variables({
           :name => server_name,
           :bin_path => bin_path,
-          :job_control => node['redisio']['job_control'],
+          :job_control => node['rackspace_redis']['job_control'],
           :port => current['port'],
           :address => current['address'],
           :user => current['user'],
@@ -270,13 +270,13 @@ def configure
           :platform => node['platform'],
           :unixsocket => current['unixsocket']
         })
-        only_if { node['redisio']['job_control'] == 'upstart' }
+        only_if { node['rackspace_redis']['job_control'] == 'upstart' }
       end
     end
   end # servers each loop
 end
 
 def load_current_resource
-  @current_resource = Chef::Resource::RedisioConfigure.new(new_resource.name)
+  @current_resource = Chef::Resource::RackspaceRedisConfigure.new(new_resource.name)
   @current_resource
 end

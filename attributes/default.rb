@@ -1,4 +1,4 @@
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Attribute::default
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -32,28 +32,28 @@ else
 end
 
 # Install related attributes
-default['redisio']['safe_install'] = true
-default['redisio']['bypass_setup'] = false
+default['rackspace_redis']['safe_install'] = true
+default['rackspace_redis']['bypass_setup'] = false
 
 # Tarball and download related defaults
-default['redisio']['mirror'] = 'http://download.redis.io/releases/'
-default['redisio']['base_name'] = 'redis-'
-default['redisio']['artifact_type'] = 'tar.gz'
-default['redisio']['version'] = '2.8.6'
-default['redisio']['base_piddir'] = '/var/run/redis'
+default['rackspace_redis']['mirror'] = 'http://download.redis.io/releases/'
+default['rackspace_redis']['base_name'] = 'redis-'
+default['rackspace_redis']['artifact_type'] = 'tar.gz'
+default['rackspace_redis']['version'] = '2.8.6'
+default['rackspace_redis']['base_piddir'] = '/var/run/redis'
 
 # Custom installation directory
-default['redisio']['install_dir'] = nil
+default['rackspace_redis']['install_dir'] = nil
 
 # Job control related options (initd or upstart)
-default['redisio']['job_control'] = 'initd'
+default['rackspace_redis']['job_control'] = 'initd'
 
 # Init.d script related options
-default['redisio']['init.d']['required_start'] = []
-default['redisio']['init.d']['required_stop'] = []
+default['rackspace_redis']['init.d']['required_start'] = []
+default['rackspace_redis']['init.d']['required_stop'] = []
 
 # Default settings for all redis instances, these can be overridden on a per server basis in the 'servers' hash
-default['redisio']['default_settings'] = {
+default['rackspace_redis']['default_settings'] = {
   'user'                    => 'redis',
   'group'                   => 'redis',
   'homedir'                 => homedir,
@@ -114,4 +114,4 @@ default['redisio']['default_settings'] = {
 }
 
 # The default for this is set inside of the "install" recipe. This is due to the way deep merge handles arrays
-default['redisio']['servers'] = nil
+default['rackspace_redis']['servers'] = nil

@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Recipe:: default
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -17,10 +17,10 @@
 # limitations under the License.
 #
 
-include_recipe "redisio::_install_prereqs"
+include_recipe "rackspace_redis::_install_prereqs"
 include_recipe "build-essential::default"
 
-unless node['redisio']['bypass_setup']
-  include_recipe "redisio::install"
-  include_recipe "redisio::configure"
+unless node['rackspace_redis']['bypass_setup']
+  include_recipe "rackspace_redis::install"
+  include_recipe "rackspace_redis::configure"
 end

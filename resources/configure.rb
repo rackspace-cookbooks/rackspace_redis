@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Resource::configure
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>

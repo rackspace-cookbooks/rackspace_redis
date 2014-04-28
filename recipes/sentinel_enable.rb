@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Recipe:: sentinel_enable
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-redis = node['redisio']
+redis = node['rackspace_redis']
 
 redis['sentinels'].each do |current_sentinel|
   sentinel_name = current_sentinel['name']

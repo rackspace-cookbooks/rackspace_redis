@@ -22,10 +22,10 @@ platforms:
 suites:
 - name: redis
   run_list:
-  - recipe[redisio::default]
-  - recipe[redisio::enable]
+  - recipe[rackspace_redis::default]
+  - recipe[rackspace_redis::enable]
   attributes: {
-    "redisio": {
+    "rackspace_redis": {
       "servers": [{
         "port": "6379"
         }]
@@ -33,13 +33,13 @@ suites:
   }
 - name: sentinel
   run_list:
-  - recipe[redisio::sentinel]
-  - recipe[redisio::sentinel_enable]
+  - recipe[rackspace_redis::sentinel]
+  - recipe[rackspace_redis::sentinel_enable]
   attributes: {
-    "redisio": {
+    "rackspace_redis": {
       "sentinels": [{
         "sentinel_port": "26379",
-        "name": "redisio",
+        "name": 'rackspace_redis',
         "master_port": "6379"
         }]
     }

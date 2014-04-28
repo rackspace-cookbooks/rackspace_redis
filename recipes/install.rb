@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Recipe:: install
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -16,14 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe 'redisio::_install_prereqs'
+include_recipe 'rackspace_redis::_install_prereqs'
 include_recipe 'build-essential::default'
 include_recipe 'ulimit::default'
 
-redis = node['redisio']
+redis = node['rackspace_redis']
 location = "#{redis['mirror']}/#{redis['base_name']}#{redis['version']}.#{redis['artifact_type']}"
 
-redisio_install "redis-installation" do
+rackspace_redis_install "redis-installation" do
   version redis['version']
   download_url location
   safe_install redis['safe_install']

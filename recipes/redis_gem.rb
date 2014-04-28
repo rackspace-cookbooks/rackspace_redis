@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Recipe:: redis_gem
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-gem_package node['redisio']['gem']['name'] do
-  version node['redisio']['gem']['version'] unless node['redisio']['gem']['version'].nil?  
+gem_package node['rackspace_redis']['gem']['name'] do
+  version node['rackspace_redis']['gem']['version'] unless node['rackspace_redis']['gem']['version'].nil?  
   action :install
 end

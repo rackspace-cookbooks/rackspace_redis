@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Recipe:: configure
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -17,17 +17,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe 'redisio::default'
+include_recipe 'rackspace_redis::default'
 include_recipe 'ulimit::default'
 
-redis = node['redisio']
+redis = node['rackspace_redis']
 
 redis_instances = redis['servers']
 if redis_instances.nil?
   redis_instances = [{'port' => '6379'}]
 end
 
-redisio_configure "redis-servers" do
+rackspace_redis_configure "redis-servers" do
   version redis['version']
   default_settings redis['default_settings']
   servers redis_instances
@@ -37,7 +37,7 @@ end
 # Create a service resource for each redis instance, named for the port it runs on.
 redis_instances.each do |current_server|
   server_name = current_server['name'] || current_server['port']
-  job_control = node['redisio']['job_control']
+  job_control = node['rackspace_redis']['job_control']
 
   if job_control == 'initd'
   	service "redis#{server_name}" do
@@ -61,5 +61,5 @@ redis_instances.each do |current_server|
 
 end
 
-node.set['redisio']['servers'] = redis_instances
+node.set['rackspace_redis']['servers'] = redis_instances
 

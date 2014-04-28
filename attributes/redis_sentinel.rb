@@ -1,4 +1,4 @@
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Attribute::default
 #
 # Copyright 2013, Rackspace Hosting <ryan.cleere@rackspace.com>
@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-default['redisio']['sentinel_defaults'] = {
+default['rackspace_redis']['sentinel_defaults'] = {
   'user'                    => 'redis',
   'configdir'               => '/etc/redis',
   'sentinel_port'           => 26379,
@@ -27,4 +27,4 @@ default['redisio']['sentinel_defaults'] = {
   'failover-timeout'        => 900000
 }
 
-default['redisio']['sentinels'] = []
+default['rackspace_redis']['sentinels'] = []

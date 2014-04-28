@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Provider::sentinel
 #
 # Copyright 2013, Rackspace Hosting <ryan.cleere@rackspace.com>
@@ -84,14 +84,14 @@ def configure
       #Lay down the configuration files for the current instance
       template "#{current['configdir']}/#{sentinel_name}.conf" do
         source 'sentinel.conf.erb'
-        cookbook 'redisio'
+        cookbook 'rackspace_redis'
         owner current['user']
         group current['group']
         mode '0644'
         variables({
           :piddir                 => piddir,
           :name                   => sentinel_name,
-          :job_control            => node['redisio']['job_control'],
+          :job_control            => node['rackspace_redis']['job_control'],
           :sentinel_port          => current['sentinel_port'],
           :masterip               => current['master_ip'],
           :masterport             => current['master_port'],
@@ -104,47 +104,47 @@ def configure
       end
       #Setup init.d file
       bin_path = "/usr/local/bin"
-      bin_path = ::File.join(node['redisio']['install_dir'], 'bin') if node['redisio']['install_dir']
+      bin_path = ::File.join(node['rackspace_redis']['install_dir'], 'bin') if node['rackspace_redis']['install_dir']
       template "/etc/init.d/redis_#{sentinel_name}" do
         source 'sentinel.init.erb'
-        cookbook 'redisio'
+        cookbook 'rackspace_redis'
         owner 'root'
         group 'root'
         mode '0755'
         variables({
           :name => sentinel_name,
           :bin_path => bin_path,
-          :uob_control => node['redisio']['job_control'],
+          :uob_control => node['rackspace_redis']['job_control'],
           :user => current['user'],
           :configdir => current['configdir'],
           :piddir => piddir,
           :platform => node['platform'],
           })
-        only_if { node['redisio']['job_control'] == 'initd' }
+        only_if { node['rackspace_redis']['job_control'] == 'initd' }
       end
       template "/etc/init/redis_#{sentinel_name}.conf" do
         source 'sentinel.upstart.conf.erb'
-        cookbook 'redisio'
+        cookbook 'rackspace_redis'
         owner current['user']
         group current['group']
         mode '0644'
         variables({
           :name => sentinel_name,
           :bin_path => bin_path,
-          :job_control => node['redisio']['job_control'],
+          :job_control => node['rackspace_redis']['job_control'],
           :user => current['user'],
           :group => current['group'],
           :configdir => current['configdir'],
           :piddir => piddir,
           :platform => node['platform'],
           })
-        only_if { node['redisio']['job_control'] == 'upstart' }
+        only_if { node['rackspace_redis']['job_control'] == 'upstart' }
       end
     end
   end # servers each loop
 end
 
 def load_current_resource
-  @current_resource = Chef::Resource::RedisioSentinel.new(new_resource.name)
+  @current_resource = Chef::Resource::RackspaceRedisSentinel.new(new_resource.name)
   @current_resource
 end

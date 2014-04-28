@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Recipe:: disable
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-redis = node['redisio']
+redis = node['rackspace_redis']
 
 redis['servers'].each do |current_server|
   server_name = current_server["name"] || current_server["port"]

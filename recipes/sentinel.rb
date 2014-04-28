@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Recipe:: sentinel
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -17,18 +17,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-include_recipe 'redisio::_install_prereqs'
-include_recipe 'redisio::install'
+include_recipe 'rackspace_redis::_install_prereqs'
+include_recipe 'rackspace_redis::install'
 include_recipe 'ulimit::default'
 
-redis = node['redisio']
+redis = node['rackspace_redis']
 
 sentinel_instances = redis['sentinels']
 if sentinel_instances.empty?
   sentinel_instances = [{'port' => '26379', 'name' => 'mycluster', 'master_ip' => '127.0.0.1', 'master_port' => 6379}]
 end
 
-redisio_sentinel "redis-sentinels" do
+rackspace_redis_sentinel "redis-sentinels" do
   sentinel_defaults redis['sentinel_defaults']
   sentinels sentinel_instances
   base_piddir redis['base_piddir']
@@ -37,7 +37,7 @@ end
 # Create a service resource for each sentinel instance, named for the port it runs on.
 sentinel_instances.each do |current_sentinel|
   sentinel_name = current_sentinel['name']
-  job_control   = node['redisio']['job_control']
+  job_control   = node['rackspace_redis']['job_control']
 
   if job_control == 'initd'
   	service "redis_sentinel_#{sentinel_name}" do
@@ -66,5 +66,5 @@ sentinel_instances.each do |current_sentinel|
 
 end
 
-node.set['redisio']['sentinels'] = sentinel_instances
+node.set['rackspace_redis']['sentinels'] = sentinel_instances
 

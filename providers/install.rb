@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: redisio
+# Cookbook Name:: rackspace_redis
 # Provider::install
 #
 # Copyright 2013, Brian Bianco <brian.bianco@gmail.com>
@@ -59,7 +59,7 @@ end
 
 def redis_exists?
   bin_path = "/usr/local/bin"
-  bin_path = ::File.join(node['redisio']['install_dir'], 'bin') if node['redisio']['install_dir']
+  bin_path = ::File.join(node['rackspace_redis']['install_dir'], 'bin') if node['rackspace_redis']['install_dir']
   redis_server = ::File.join(bin_path, 'redis-server')
   ::File.exists?(redis_server)
 end
@@ -67,7 +67,7 @@ end
 def version
   if redis_exists?
     bin_path = "/usr/local/bin"
-    bin_path = ::File.join(node['redisio']['install_dir'], 'bin') if node['redisio']['install_dir']
+    bin_path = ::File.join(node['rackspace_redis']['install_dir'], 'bin') if node['rackspace_redis']['install_dir']
     redis_server = ::File.join(bin_path, 'redis-server')
     redis_version = Mixlib::ShellOut.new("#{redis_server} -v")
     redis_version.run_command
@@ -79,7 +79,7 @@ def version
 end
 
 def load_current_resource
-  @current_resource = Chef::Resource::RedisioInstall.new(new_resource.name)
+  @current_resource = Chef::Resource::RackspaceRedisInstall.new(new_resource.name)
   @current_resource.version(version)
   @current_resource
 end
