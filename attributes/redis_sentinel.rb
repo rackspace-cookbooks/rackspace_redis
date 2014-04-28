@@ -19,12 +19,12 @@
 default['rackspace_redis']['sentinel_defaults'] = {
   'user'                    => 'redis',
   'configdir'               => '/etc/redis',
-  'sentinel_port'           => 26379,
+  'sentinel_port'           => 263_79,
   'monitor'                 => nil,
-  'down-after-milliseconds' => 30000,
+  'down-after-milliseconds' => 300_00,
   'can-failover'            => 'yes',
   'parallel-syncs'          => 1,
-  'failover-timeout'        => 900000,
+  'failover-timeout'        => 900_000,
   'logfile'					=> '/var/log/sentinel.log'
 }
 

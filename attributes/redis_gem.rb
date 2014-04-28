@@ -20,4 +20,3 @@
 # Allow for a redis ruby gem to be installed
 default['rackspace_redis']['gem']['name'] = 'redis'
 default['rackspace_redis']['gem']['version'] = nil
-

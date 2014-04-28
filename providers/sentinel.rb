@@ -19,6 +19,7 @@
 
 action :run do
   configure
+  new_resource.updated_by_last_action(true)
 end
 
 def configure
@@ -64,7 +65,7 @@ def configure
         action :create
       end
       #Create the log directory if syslog is not being used
-      directory ::File.dirname("#{current['logfile']}") do
+      directory ::File.dirname(current['logfile']) do
         owner current['user']
         group current['group']
         mode '0755'
