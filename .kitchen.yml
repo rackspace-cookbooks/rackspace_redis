@@ -39,8 +39,13 @@ suites:
     "rackspace_redis": {
       "sentinels": [{
         "sentinel_port": "26379",
-        "name": 'rackspace_redis',
-        "master_port": "6379"
+        "name": 'rediscluster',
+        "master_port": "6379",
+        "logfile": "/var/log/sentinel.log",
+        "master_ip": '127.0.0.1'
+        }],
+        "servers": [{
+        "port": "6379"
         }]
     }
   }

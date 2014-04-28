@@ -26,4 +26,10 @@ redis['sentinels'].each do |current_sentinel|
   resource.action Array(resource.action)
   resource.action << :start
   resource.action << :enable
+  bash "forcibly start sentinel" do
+	  cwd "/tmp"
+	  code <<-EOH
+	  /etc/init.d/redis_sentinel_#{sentinel_name} start
+	  EOH
+  end
 end

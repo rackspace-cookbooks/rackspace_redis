@@ -24,7 +24,8 @@ default['rackspace_redis']['sentinel_defaults'] = {
   'down-after-milliseconds' => 30000,
   'can-failover'            => 'yes',
   'parallel-syncs'          => 1,
-  'failover-timeout'        => 900000
+  'failover-timeout'        => 900000,
+  'logfile'					=> '/var/log/sentinel.log'
 }
 
 default['rackspace_redis']['sentinels'] = []
