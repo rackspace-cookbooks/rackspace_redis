@@ -1,4 +1,6 @@
-**Please read the changelog when upgrading from the 1.x series to the 2.x series**
+**HERE BE DRAGONS**: 
+Please read the changelog when upgrading from the 1.x series to the 2.x series of the community cookbook. This is a downstream fork that is tracking the community cookbook
+This cookbook was version-bumped to 2.0 to track the community cookbook's 2.0 WIP branch.
 
 Description
 ===========
